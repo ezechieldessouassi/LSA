@@ -20,12 +20,33 @@ import joblib
 import requests
 import streamlit as st
 
+import gdown
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
 from deep_translator import GoogleTranslator
+
+# Fichiers sur Google Drive
+FILES = {
+    "tfidf_vectorizer.joblib": "1xiTMlCp_ceoMYJ68GIBz-MErDCoQVZYI",
+    "lsa_model.joblib": "1H3qa870LcA7noI7HEhx9ExBHFzgIDbmh",
+    "lsa_data.npz": "1w-RrDtZbHgllJXHhO9bWis75wAkoo0rH"
+}
+
+# Téléchargement auto si fichier absent
+def download_all_artifacts():
+    for filename, file_id in FILES.items():
+        if not os.path.exists(filename):
+            url = f"https://drive.google.com/uc?id={file_id}"
+            st.info(f"Téléchargement de {filename} en cours…")
+            gdown.download(url, filename, quiet=False)
+        else:
+            print(f"{filename} déjà présent. Téléchargement ignoré.")
+
+# Appel du téléchargement
+download_all_artifacts()
 
 # Chemins
 VECTORIZER_PATH = "tfidf_vectorizer.joblib"
@@ -336,11 +357,141 @@ st.markdown("© 2025 Projet LSA • ISE 2 ENEAM • Tous droits réservés")
 with st.sidebar:
     selected_page = option_menu(
         "Menu Principal",  # Titre du menu
-        ["Accueil", "Modèle", "Classification par genres"],  # Noms des pages
-        icons=['house', 'play', 'film'],  # Icônes des pages
+        ["Accueil", "Modèle", "Classification par genres","OOb"],  # Noms des pages
+        icons=['house', 'play', 'film','play'],  # Icônes des pages
         menu_icon="cast",  # Icône du menu principal
         default_index=0,  # Page par défaut sélectionnée
     )
+
+
+def modele_b():
+    import os
+    import joblib
+    import numpy as np
+    import pandas as pd
+    import requests
+    import streamlit as st
+    from langdetect import detect
+    from sklearn.metrics.pairwise import cosine_similarity
+    from googletrans import Translator
+
+    # Constantes pour les chemins
+    VECTORIZER_PATH = "tfidf_vectorizer.joblib"
+    LSA_MODEL_PATH  = "lsa_model.joblib"
+    LSA_DATA_PATH   = "lsa_data.npz"
+
+    # 7. Recherche
+    st.markdown("<div class='section'>", unsafe_allow_html=True)
+    st.markdown("### 🔍 Recherche")
+    user_input = st.text_input("🎥 Titre du film", placeholder="e.g. Titanic")
+    lang = st.selectbox("🌐 Langue", ["en", "fr"])
+    rec_button = st.button("Recommander")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # 8. Chargement des artefacts LSA
+    @st.cache_resource
+    def load_lsa_artifacts():
+        for f in [VECTORIZER_PATH, LSA_MODEL_PATH, LSA_DATA_PATH]:
+            if not os.path.isfile(f):
+                st.error(f"Artefact manquant : {f}")
+                st.stop()
+        vec = joblib.load(VECTORIZER_PATH)
+        lsa = joblib.load(LSA_MODEL_PATH)
+        data = np.load(LSA_DATA_PATH, allow_pickle=True)
+        return vec, lsa, data["X_lsa"], data["titles"]
+
+    vectorizer, lsa_model, X_lsa, titles_ref = load_lsa_artifacts()
+    translator = Translator()
+
+    # 9. Récupérer l'URL du poster via TMDb
+    TMDB_API_KEY = "e63f0c5b3c1b67fc1b56421f3a0172c2"
+    def get_poster_url(title: str) -> str:
+        try:
+            resp = requests.get(
+                "https://api.themoviedb.org/3/search/movie",
+                params={"api_key": TMDB_API_KEY, "query": title},
+                timeout=5
+            ).json()
+            if resp.get("results"):
+                path = resp["results"][0].get("poster_path")
+                if path:
+                    return "https://image.tmdb.org/t/p/w200" + path
+        except:
+            pass
+        return ""
+
+    # 10. Fonction de recommandation
+    def recommend_general(user_title: str, top_n: int = 10):
+        try:
+            src = detect(user_title)
+            if src != lang:
+                ut = translator.translate(user_title, src=src, dest=lang).text
+            else:
+                ut = user_title
+        except:
+            ut = user_title
+
+        tfidf_ut = vectorizer.transform([ut])
+        lsa_ut = lsa_model.transform(tfidf_ut)
+        sims = cosine_similarity(lsa_ut, X_lsa).flatten()
+        idxs = np.argsort(sims)[::-1][:top_n]
+
+        rows = []
+        for i in idxs:
+            title_i = titles_ref[i]
+            score_i = sims[i]
+            poster = get_poster_url(title_i)
+            rows.append({
+                "Poster": f"![]({poster})" if poster else "",
+                "Titre": title_i,
+                "Score de similarité": f"{score_i:.3f}",
+                "PosterURL": poster
+            })
+        return pd.DataFrame(rows)
+
+    # 11. Affichage & export
+    if rec_button:
+        if not user_input.strip():
+            st.warning("Veuillez saisir un titre de film.")
+        else:
+            with st.spinner("Recherche en cours…"):
+                df_res = recommend_general(user_input, top_n=10)
+
+            st.markdown("<div class='section'>", unsafe_allow_html=True)
+            st.success(f"Top 10 recommandations pour « {user_input} »")
+
+            st.write(df_res.to_markdown(index=False), unsafe_allow_html=True)
+
+            st.markdown("### 📥 Télécharger les recommandations")
+            col_csv, col_xlsx, col_json = st.columns(3)
+
+            with col_csv:
+                st.download_button(
+                    "💾 CSV",
+                    data=df_res.drop(columns=["Poster"]).to_csv(index=False).encode("utf-8"),
+                    file_name="recommandations.csv",
+                    mime="text/csv",
+                )
+            with col_xlsx:
+                from io import BytesIO
+                buf = BytesIO()
+                df_res.drop(columns=["Poster"]).to_excel(buf, index=False, sheet_name="Reco")
+                buf.seek(0)
+                st.download_button(
+                    "📊 Excel",
+                    data=buf,
+                    file_name="recommandations.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            with col_json:
+                st.download_button(
+                    "🗄 JSON",
+                    data=df_res.drop(columns=["Poster"]).to_json(orient="records", force_ascii=False).encode("utf-8"),
+                    file_name="recommandations.json",
+                    mime="application/json",
+                )
+
+            st.markdown("</div>", unsafe_allow_html=True)
 
 def modele2():
     # =============================================================================
@@ -501,4 +652,7 @@ elif selected_page == "Modèle":
     modele()
 elif selected_page == "Classification par genres":
     modele2()
+elif selected_page=="OOb":
+    modele_b()
+
     
