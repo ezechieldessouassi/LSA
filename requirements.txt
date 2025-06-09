@@ -6,3 +6,8 @@ joblib
 gdown
 requests
 deep-translator
+os
+langdetect
+nltk
+json
+re
