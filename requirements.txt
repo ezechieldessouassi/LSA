@@ -7,7 +7,8 @@ gdown==5.2.0
 requests==2.32.3
 deep-translator==1.11.4
 langdetect==1.0.9
-googletrans==4.0.0-rc1
+googletrans==4.0.0rc1  # J'ai enlevé le '-' avant rc1, c'est la notation standard
 streamlit-option-menu==0.3.2
 nltk==3.8.1
-tabulate
+tabulate  # Ajouté pour .to_markdown()
+openpyxl  # Ajouté pour .to_excel()
