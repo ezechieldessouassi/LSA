@@ -28,6 +28,8 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
 from deep_translator import GoogleTranslator
 
+st.set_page_config(layout="wide", page_icon="🎬", page_title="LSA")
+
 # Fichiers sur Google Drive
 FILES = {
     "tfidf_vectorizer.joblib": "1xiTMlCp_ceoMYJ68GIBz-MErDCoQVZYI",
@@ -55,7 +57,7 @@ LSA_DATA_PATH   = "lsa_data.npz"
 
 # Traduction
 translator = Translator()
-st.set_page_config(layout="wide", page_icon="🎬", page_title="LSA")
+
 
 # Chargement des artefacts
 @st.cache_resource
