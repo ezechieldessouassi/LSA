@@ -502,8 +502,8 @@ def modele2():
 
 
     
-   # nltk.download("stopwords")
-    #nltk.download("wordnet")
+    nltk.download("stopwords")
+    nltk.download("wordnet")
 
     # === Paramètres
     TMDB_API_KEY = "e63f0c5b3c1b67fc1b56421f3a0172c2"
