@@ -178,6 +178,18 @@ def page_accueil():
         st.image("eneam.jpg", width=160)
     st.markdown("</div>", unsafe_allow_html=True)
 
+    # Bannière GIF Netflix en plein largeur
+    st.markdown("""
+    <div style="width:100%; margin-bottom:20px;">
+        <div class="tenor-gif-embed" 
+             data-postid="11105966387031760057" 
+             data-share-method="host" 
+             data-aspect-ratio="1.77778" 
+             data-width="100%">
+        </div>
+        <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+    </div>
+    """, unsafe_allow_html=True)
     with st.expander("📘 Bienvenue", expanded=True):
         st.markdown("""<h3 style='font-family: "Trebuchet MS", sans-serif; font-weight: bold; color: #B8860B;'>
         Bienvenue sur l'interface de recommandation de films par similarité sémantique (modèle LSA)
