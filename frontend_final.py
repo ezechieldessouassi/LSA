@@ -514,7 +514,9 @@ def modele2():
     # === Chargement des données
     @st.cache_data
     def load_data():
-        df0 = pd.read_csv("movies_metadata.csv", low_memory=False)
+        file_id = "1ettDdJj6sczsiKpU2qWyJLfOR4sGPztG"
+        download_url = f"https://drive.google.com/uc?id={file_id}"
+        df0 = pd.read_csv(download_url, low_memory=False)
         df = df0[["original_title", "overview", "genres"]].copy()
 
         def extract_genres(genre_str):
