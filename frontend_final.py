@@ -305,52 +305,6 @@ def page_accueil():
 
     st.success("Cette méthode permet une **recommandation sémantique intelligente**, bien plus pertinente qu’un simple appariement de mots-clés.")
 
-
-# === PAGE MODÈLE =========================================================================
-def modele ():
-    st.markdown("<div class='section'>", unsafe_allow_html=True)
-    st.markdown("### 🔍 Recherche")
-    user_input = st.text_input("🎥 Titre du film", placeholder="e.g. Titanic")
-    lang = st.selectbox("🌐 Langue", ["en", "fr"])
-    rec_button = st.button("Recommander")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    if rec_button:
-        if not user_input.strip():
-            st.warning("Veuillez saisir un titre de film.")
-        else:
-            with st.spinner("Recherche en cours…"):
-                try:
-                    src = detect(user_input)
-                    if src != lang:
-                        query = translator.translate(user_input, src=src, dest=lang).text
-                    else:
-                        query = user_input
-                except:
-                    query = user_input
-                raw = recommend_general(query, top_n=10)
-                df_res = pd.DataFrame(raw, columns=["Titre", "Score de similarité"])
-                df_res["Score de similarité"] = df_res["Score de similarité"].map(lambda x: f"{x:.3f}")
-
-            st.markdown("<div class='section'>", unsafe_allow_html=True)
-            st.success(f"Top 10 recommandations pour « {user_input} »")
-            st.table(df_res)
-
-            col_csv, col_xlsx, _ = st.columns(3)
-            with col_csv:
-                st.download_button("💾 CSV", data=df_res.to_csv(index=False).encode('utf-8'),
-                                   file_name="recommandations.csv", mime="text/csv")
-            with col_xlsx:
-                from io import BytesIO
-                buffer = BytesIO()
-                df_res.to_excel(buffer, index=False, sheet_name="Recommandations")
-                buffer.seek(0)
-                st.download_button("📊 Excel", data=buffer, file_name="recommandations.xlsx",
-                                   mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            st.markdown("</div>", unsafe_allow_html=True)
-
-
-
 # Pied de page
 st.markdown("---")
 st.markdown("© 2025 Projet LSA • ISE 2 ENEAM • Tous droits réservés")
@@ -494,6 +448,10 @@ def modele_b():
                 )
 
             st.markdown("</div>", unsafe_allow_html=True)
+
+# Pied de page
+st.markdown("---")
+st.markdown("© 2025 Projet LSA • ISE 2 ENEAM • Tous droits réservés")
 
 def modele2():
     # =============================================================================
