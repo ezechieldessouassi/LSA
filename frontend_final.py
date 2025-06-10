@@ -313,14 +313,14 @@ st.markdown("© 2025 Projet LSA • ISE 2 ENEAM • Tous droits réservés")
 with st.sidebar:
     selected_page = option_menu(
         "Menu Principal",  # Titre du menu
-        ["Accueil", "Modèle", "Classification par genres","OOb"],  # Noms des pages
-        icons=['house', 'play', 'film','play'],  # Icônes des pages
+        ["Accueil", "Modèle", "Classification par genres"],  # Noms des pages
+        icons=['house', 'play', 'film'],  # Icônes des pages
         menu_icon="cast",  # Icône du menu principal
         default_index=0,  # Page par défaut sélectionnée
     )
 
 
-def modele_b():
+def modele():
     import os
     import joblib
     import numpy as np
@@ -614,7 +614,4 @@ elif selected_page == "Modèle":
     modele()
 elif selected_page == "Classification par genres":
     modele2()
-elif selected_page=="OOb":
-    modele_b()
-
     
