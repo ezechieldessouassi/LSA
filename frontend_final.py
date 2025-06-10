@@ -71,7 +71,7 @@ def load_lsa_artifacts():
     vec = joblib.load(VECTORIZER_PATH)
     lsa = joblib.load(LSA_MODEL_PATH)
     data = np.load(LSA_DATA_PATH, allow_pickle=True)
-    csv=np.load(CSV_DATA)
+    csv=np.load(CSV_DATA, allow_pickle=True)
     return vec, lsa, data["X_lsa"], data["titles"]
 
 vectorizer, lsa_model, X_lsa, titles_ref = load_lsa_artifacts()
