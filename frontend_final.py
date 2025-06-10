@@ -34,7 +34,8 @@ st.set_page_config(layout="wide", page_icon="🎬", page_title="LSA")
 FILES = {
     "tfidf_vectorizer.joblib": "1xiTMlCp_ceoMYJ68GIBz-MErDCoQVZYI",
     "lsa_model.joblib": "1H3qa870LcA7noI7HEhx9ExBHFzgIDbmh",
-    "lsa_data.npz": "1w-RrDtZbHgllJXHhO9bWis75wAkoo0rH"
+    "lsa_data.npz": "1w-RrDtZbHgllJXHhO9bWis75wAkoo0rH",
+    "movies_metadata.csv": "1ettDdJj6sczsiKpU2qWyJLfOR4sGPztG"
 }
 
 # Téléchargement auto si fichier absent
@@ -54,6 +55,7 @@ download_all_artifacts()
 VECTORIZER_PATH = "tfidf_vectorizer.joblib"
 LSA_MODEL_PATH  = "lsa_model.joblib"
 LSA_DATA_PATH   = "lsa_data.npz"
+CSV_DATA = "movies_metadata.csv"
 
 # Traduction
 translator = Translator()
@@ -62,13 +64,14 @@ translator = Translator()
 # Chargement des artefacts
 @st.cache_resource
 def load_lsa_artifacts():
-    for f in [VECTORIZER_PATH, LSA_MODEL_PATH, LSA_DATA_PATH]:
+    for f in [VECTORIZER_PATH, LSA_MODEL_PATH, LSA_DATA_PATH, CSV_DATA]:
         if not os.path.isfile(f):
             st.error(f"Artefact manquant : {f}")
             st.stop()
     vec = joblib.load(VECTORIZER_PATH)
     lsa = joblib.load(LSA_MODEL_PATH)
     data = np.load(LSA_DATA_PATH, allow_pickle=True)
+    csv=np.load(CSV_DATA)
     return vec, lsa, data["X_lsa"], data["titles"]
 
 vectorizer, lsa_model, X_lsa, titles_ref = load_lsa_artifacts()
