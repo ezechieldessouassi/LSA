@@ -317,11 +317,6 @@ def page_accueil():
 
     st.success("Cette méthode permet une **recommandation sémantique intelligente**, bien plus pertinente qu’un simple appariement de mots-clés.")
 
-# Pied de page
-st.markdown("---")
-st.markdown("© 2025 Projet LSA • ISE 2 ENEAM • Tous droits réservés")
-
-
 with st.sidebar:
     selected_page = option_menu(
         "Menu Principal",  # Titre du menu
