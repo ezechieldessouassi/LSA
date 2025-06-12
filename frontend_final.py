@@ -151,10 +151,10 @@ body, .main { background-color: #F8F8FF}
 }
 .team-card .info { font-size: 1.1rem; }
 .stButton>button {
-  background-color: #4B0082; color: white; border-radius: 5px;
+  background-color: blue; color: white; border-radius: 5px;
   padding: 0.5em 1.5em;
 }
-.stButton>button:hover { background-color: #6A0DAD; }
+.stButton>button:hover { background-color: green; }
 .section {
   background-color: #FFFFFF; padding: 15px; border-radius: 8px;
   box-shadow: 1px 1px 4px rgba(0,0,0,0.1); margin-bottom: 20px;
