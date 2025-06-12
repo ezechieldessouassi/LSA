@@ -168,6 +168,7 @@ body, .main { background-color: #F8F8FF}
 # === PAGE ACCUEIL ========================================================================
 #if page == "🏠 Accueil":
 def page_accueil():
+    st.image("netflix.gif",use_container_width=True)
     st.markdown("<div class='header'>", unsafe_allow_html=True)
     col_l, col_t, col_r = st.columns([1, 7, 1])
     with col_l:
@@ -178,18 +179,7 @@ def page_accueil():
         st.image("eneam.jpg", width=160)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # Bannière GIF Netflix en plein largeur
-    st.markdown("""
-    <div style="width:100%; margin-bottom:20px;">
-        <div class="tenor-gif-embed" 
-             data-postid="11105966387031760057" 
-             data-share-method="host" 
-             data-aspect-ratio="1.77778" 
-             data-width="100%">
-        </div>
-        <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
-    </div>
-    """, unsafe_allow_html=True)
+   
     with st.expander("📘 Bienvenue", expanded=True):
         st.markdown("""<h3 style='font-family: "Trebuchet MS", sans-serif; font-weight: bold; color: #B8860B;'>
         Bienvenue sur l'interface de recommandation de films par similarité sémantique (modèle LSA)
@@ -205,10 +195,10 @@ def page_accueil():
     st.markdown("<div class='section'>", unsafe_allow_html=True)
     st.markdown("### 👥 Membres du groupe")
     members = [
-        {"nom": "Peace AHOUANSE",     "rôle": "Data Scientist"},
-        {"nom": "Brilland BABA",      "rôle": "Front-end"},
-        {"nom": "Ezéchiel DESSOUASSI","rôle": "Ingénieur ML"},
-        {"nom": "Térence KPADADONOU", "rôle": "Back-end"},
+        {"nom": "Peace AHOUANSE"},
+        {"nom": "Brilland BABA"},
+        {"nom": "Ezéchiel DESSOUASSI"},
+        {"nom": "Térence KPADONOU"},
     ]
     col_a, col_b = st.columns(2)
     for idx, col in enumerate([col_a, col_b]):
@@ -217,7 +207,7 @@ def page_accueil():
                 st.markdown(f"""
                 <div class="team-card">
                   <div class="indicator"></div>
-                  <div class="info"><strong>{m["nom"]}</strong> — {m["rôle"]}</div>
+                  <div class="info"><strong>{m["nom"]}</strong> </div>
                 </div>""", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
     
